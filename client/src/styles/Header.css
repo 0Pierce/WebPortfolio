@@ -1,0 +1,47 @@
+.headerBody{
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    background-color: black;
+    outline: 3px solid red;
+    z-index: 10
+    
+}
+
+.headerContent{
+    position: relative;
+    width: 50%;
+    height: 100%;
+    color: aliceblue;
+    outline: 3px solid rgb(0, 238, 255);
+}
+
+.headerLinks {
+    position: relative;
+    
+    width: 50%;
+    height: 100%;
+}
+
+.headerBody ul {
+    display: flex;
+    margin: 0px;
+    color: rgb(255, 255, 255);
+    position: absolute;
+    top: 35%;
+    right: 50px;
+}
+
+.headerBody li {
+    position: relative;
+    margin-top: 0;
+    margin-left: 35px;
+    font-size: 20px;
+
+}
+
+.headerBody li a {
+    color: aliceblue;
+}

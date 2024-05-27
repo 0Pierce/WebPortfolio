@@ -1,0 +1,14 @@
+.homePageBody{
+    background-color: aquamarine;
+    width: 100%;
+    height: 100vh;
+    margin: 0px;
+    margin-top: 0px;
+    position: relative;
+    z-index: 3;
+}
+
+.homePageBody h1{
+    margin: 0px;
+    position: absolute;
+}
