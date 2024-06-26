@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useRef, useEffect, Suspense } from 'react';
 import Kiwi from '/src/assets/models/Kiwi.jsx'
-
+import Brain from '/src/assets/models/Brain.jsx'
 
 
 
@@ -58,18 +58,31 @@ function Landing() {
       <div className="landingContent">
         <div className="landingCanvas">
         
-    <Canvas>
+    <Canvas
+      camera={{
+        position:[0,3,0],
+        rotation: [50, 30, 0],
+        fov: 55,
+        near: 0.1,
+        far: 500
+      }}
+    >
 
         
         <ambientLight />
-        <pointLight/>
+        {/* <pointLight/> */}
         
         <Suspense fallback={null}>
           
-            <Kiwi/>
+            {/* Rotation in radiants, so I convered into degrees for easier manipulation */}
+            <Brain 
+            rotation={[300 * ( Math.PI/180), 0 * ( Math.PI/180), 0 * ( Math.PI/180)]}
+            position={[0, 0, 0.5]}
+             />
           
          
         </Suspense>
+        <gridHelper/>
         <Controls/>
     </Canvas>
           
