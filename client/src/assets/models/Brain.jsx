@@ -7,13 +7,25 @@ Source: https://sketchfab.com/3d-models/human-brain-7a27c17fd6c0488bb31ab093236a
 Title: Human Brain
 */
 
-import React, { useRef } from 'react'
+import React, { useRef} from 'react'
+import {useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei'
 
 export default function Model(props) {
   const { nodes, materials } = useGLTF('/brain.gltf')
+
+
+  const brainRef = useRef();
+  useFrame(() => {
+    if (brainRef.current) {
+      // brainRef.current.rotation.y += 0.001; // Rotate the brain around the y-axis
+    }
+  });
+
+
   return (
-    <group {...props} dispose={null}>
+    
+    <group ref={brainRef} {...props} dispose={null}>
       <mesh geometry={nodes.Object_5.geometry} material={materials.material_0} scale={0.02} />
     </group>
   )

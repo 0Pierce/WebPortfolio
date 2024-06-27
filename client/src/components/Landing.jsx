@@ -26,29 +26,43 @@ function Controls() {
   return null;
 }
 
+let oldx = 0
+let oldy = 0
 
-function Landing() {
+function MouseCamera() {
+  const { camera } = useThree();
+  const canvas = document.querySelector('.landingCanvas');
   useEffect(() => {
+    const handleMouseMove = (e) => {
+      console.log("MOVE")
+      let newx =( e.clientX - oldx) * 0.03;
+      let newy = (e.clientY - oldy)*0.03;
+      camera.position.x +=newx/100
+      camera.position.y -=newy/100
 
-    
+      oldx = e.clientX;
+      oldy = e.clientY;
+      
+    };
 
-    // Cleanup function
+
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+
     return () => {
-     
-     
-      //renderer.dispose();
+      canvas.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
+}
 
 
-  const Box = () => {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="royalblue" />
-      </mesh>
-    );
-  };
+
+function Landing() {
+  const brainRef = useRef();
+
+
+
+
 
 
 
@@ -61,28 +75,30 @@ function Landing() {
     <Canvas
       camera={{
         position:[0,3,0],
-        rotation: [50, 30, 0],
         fov: 55,
         near: 0.1,
         far: 500
       }}
     >
-
+        {/* <MouseCamera/> */}
         
-        <ambientLight />
+        <pointLight position={[0, 5, 5]} intensity={35} />
+        <ambientLight intensity={0.5} />
         {/* <pointLight/> */}
         
         <Suspense fallback={null}>
           
             {/* Rotation in radiants, so I convered into degrees for easier manipulation */}
-            <Brain 
-            rotation={[300 * ( Math.PI/180), 0 * ( Math.PI/180), 0 * ( Math.PI/180)]}
-            position={[0, 0, 0.5]}
+            <Brain
+            ref={brainRef}
+            rotation={[0 * ( Math.PI/180), 0 * ( Math.PI/180), 0 * ( Math.PI/180)]}
+            position={[0, 0, 0.3]}
              />
           
          
         </Suspense>
         <gridHelper/>
+        
         <Controls/>
     </Canvas>
           
