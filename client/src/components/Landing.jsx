@@ -74,6 +74,7 @@ function Landing() {
         
     <Canvas
       camera={{
+         
         position:[0,3,0],
         fov: 55,
         near: 0.1,
@@ -92,7 +93,7 @@ function Landing() {
             <Brain
             ref={brainRef}
             rotation={[0 * ( Math.PI/180), 0 * ( Math.PI/180), 0 * ( Math.PI/180)]}
-            position={[0, 0, 0.3]}
+            position={[0, 0, 0]}
              />
           
          
