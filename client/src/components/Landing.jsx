@@ -5,6 +5,7 @@ import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fibe
 import { useRef, useEffect, Suspense } from 'react';
 import Kiwi from '/src/assets/models/Kiwi.jsx'
 import Brain from '/src/assets/models/Brain.jsx'
+import { CameraControls } from "@react-three/drei";
 
 
 
@@ -56,10 +57,22 @@ function MouseCamera() {
 }
 
 
+function  SetCamera() {
+  const camera = useThree(state => state.camera)
+  useEffect(() => {
+    camera.rotation.set(0, 0, 0)
+    camera.updateProjectionMatrix()
+  }, [])
+  return null
+}
+
+
 
 function Landing() {
   const brainRef = useRef();
+  const controls = useRef();
 
+  
 
 
 
@@ -75,13 +88,13 @@ function Landing() {
     <Canvas
       camera={{
          
-        position:[0,3,0],
-        fov: 55,
+        position:[0,0.5,2.5],
+        fov: 75,
         near: 0.1,
         far: 500
       }}
     >
-        {/* <MouseCamera/> */}
+        <MouseCamera/>
         
         <pointLight position={[0, 5, 5]} intensity={35} />
         <ambientLight intensity={0.5} />
@@ -91,16 +104,17 @@ function Landing() {
           
             {/* Rotation in radiants, so I convered into degrees for easier manipulation */}
             <Brain
-            ref={brainRef}
-            rotation={[0 * ( Math.PI/180), 0 * ( Math.PI/180), 0 * ( Math.PI/180)]}
+            // ref={brainRef}
+            rotation={[0 * ( Math.PI/180), 35 * ( Math.PI/180), 0 * ( Math.PI/180)]}
             position={[0, 0, 0]}
              />
           
          
         </Suspense>
         <gridHelper/>
-        
-        <Controls/>
+        <SetCamera/>
+        {/* <Controls/> */}
+        {/* <CameraControls ref={controls} /> */}
     </Canvas>
           
         </div>
