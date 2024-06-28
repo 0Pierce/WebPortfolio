@@ -2,9 +2,10 @@ import "/src/styles/Landing.css";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
-import { useRef, useEffect, Suspense } from 'react';
+import { useRef, useEffect, Suspense, useState } from 'react';
 import Kiwi from '/src/assets/models/Kiwi.jsx'
 import Brain from '/src/assets/models/Brain.jsx'
+import Floor from '/src/assets/models/Floor.jsx'
 import { CameraControls } from "@react-three/drei";
 
 
@@ -73,8 +74,11 @@ function Landing() {
   const controls = useRef();
 
   
-
-
+  const [hovered, setHovered] = useState(false)
+  useEffect(() => {
+    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    console.log("Hover")
+  }, [hovered])
 
 
 
@@ -86,9 +90,10 @@ function Landing() {
         <div className="landingCanvas">
         
     <Canvas
+      shadows 
       camera={{
          
-        position:[0,0.5,2.5],
+        position:[0,1.2,2.5],
         fov: 75,
         near: 0.1,
         far: 500
@@ -96,9 +101,15 @@ function Landing() {
     >
         <MouseCamera/>
         
-        <pointLight position={[0, 5, 5]} intensity={35} />
-        <ambientLight intensity={0.5} />
-        {/* <pointLight/> */}
+        <pointLight
+         position={[4, 3, 3]}
+         intensity={35}
+         castShadow
+         shadow-bias={-0.005}
+
+          />
+        {/* <ambientLight intensity={0.1} /> */}
+        
         
         <Suspense fallback={null}>
           
@@ -106,8 +117,12 @@ function Landing() {
             <Brain
             // ref={brainRef}
             rotation={[0 * ( Math.PI/180), 35 * ( Math.PI/180), 0 * ( Math.PI/180)]}
-            position={[0, 0, 0]}
+            position={[0, 0.5, 0]}
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
              />
+
+             <Floor/>
           
          
         </Suspense>

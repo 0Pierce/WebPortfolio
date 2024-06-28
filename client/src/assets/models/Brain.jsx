@@ -18,7 +18,7 @@ export default function Model(props) {
   const brainRef = useRef();
   useFrame(() => {
     if (brainRef.current) {
-      // brainRef.current.rotation.y += 0.001; // Rotate the brain around the y-axis
+      brainRef.current.rotation.y += 0.001; // Rotate the brain around the y-axis
     }
   });
 
@@ -26,7 +26,7 @@ export default function Model(props) {
   return (
     
     <group ref={brainRef} {...props} dispose={null}>
-      <mesh geometry={nodes.Object_5.geometry} material={materials.material_0} scale={0.02} />
+      <mesh geometry={nodes.Object_5.geometry} material={materials.material_0} scale={0.02} castShadow receiveShadow />
     </group>
   )
 }
