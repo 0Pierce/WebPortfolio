@@ -3,16 +3,20 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useRef, useEffect, Suspense, useState } from 'react';
+import gsap from 'gsap';
+import { CameraControls, useGLTF } from "@react-three/drei";
+import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
+
 import Kiwi from '/src/assets/models/Kiwi.jsx'
 import Brain from '/src/assets/models/Brain.jsx'
 import Floor from '/src/assets/models/Floor.jsx'
-import { CameraControls } from "@react-three/drei";
 
 
 
-//React
+const CamPos = [0,1.2,2.5]
 
 
+//Sets up orbit controls
 extend({ OrbitControls });
 function Controls() {
   const { camera, gl } = useThree();
@@ -28,37 +32,66 @@ function Controls() {
   return null;
 }
 
-let oldx = 0
-let oldy = 0
 
+
+//Makes the camera move with the mouse
 function MouseCamera() {
+  let oldx = 0
+  let oldy = 0
+  
   const { camera } = useThree();
   const canvas = document.querySelector('.landingCanvas');
   useEffect(() => {
     const handleMouseMove = (e) => {
       console.log("MOVE")
-      let newx =( e.clientX - oldx) * 0.03;
-      let newy = (e.clientY - oldy)*0.03;
+      let newx =( e.clientX - oldx) * 0.08;
+      let newy = (e.clientY - oldy)*0.1;
+      
+
       camera.position.x +=newx/100
       camera.position.y -=newy/100
+      camera.lookAt(0, 1.2, 0)
+      
 
       oldx = e.clientX;
       oldy = e.clientY;
       
+      
+    };
+
+const handleMouseExit = (e) => {
+      console.log("Exit");
+      gsap.to(camera.position, {
+        x: CamPos[0],
+        y: CamPos[1],
+        z: CamPos[2],
+        duration: 1, 
+        ease: "power2.inOut"
+      });
+      gsap.to(camera.rotation, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 1,
+        ease: "power2.inOut",
+        onUpdate: () => camera.updateProjectionMatrix() 
+      });
     };
 
 
 
     canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseExit);
 
     return () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseExit);
     };
   }, []);
 }
 
 
-function  SetCamera() {
+function  SetCameraRotation() {
   const camera = useThree(state => state.camera)
   useEffect(() => {
     camera.rotation.set(0, 0, 0)
@@ -68,17 +101,58 @@ function  SetCamera() {
 }
 
 
+function transformMesh(mesh) {
+  const pointsGeometry = new THREE.BufferGeometry()
+  const vertices = []
+  const tempPosition = new THREE.Vector3()
+
+  const sampler = new MeshSurfaceSampler(mesh).build()
+
+  for (let i = 0; i < 99000; i++) {
+    sampler.sample(tempPosition)
+    vertices.push(tempPosition.x, tempPosition.y, tempPosition.z)
+  }
+
+  pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+
+  const pointsMaterial = new THREE.PointsMaterial({
+    color: 0x5c0b17,
+    size: 0.005,
+    blending: THREE.AdditiveBlending,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
+    sizeAttenuation: true
+  })
+
+  return new THREE.Points(pointsGeometry, pointsMaterial)
+}
+
 
 function Landing() {
   const brainRef = useRef();
   const controls = useRef();
+  const groupRef = useRef();
+  
 
   
   const [hovered, setHovered] = useState(false)
+  const { nodes } = useGLTF('/brain.gltf');
+  
+
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto'
-    console.log("Hover")
-  }, [hovered])
+    groupRef.current = new THREE.Group();
+    if (hovered && nodes && nodes.brain) {
+      const points = transformMesh(nodes.brain);
+      document.body.style.cursor = hovered ? 'pointer' : 'auto'
+      groupRef.current.add(points);
+    } else {
+      // Remove points if not hovered
+      while (groupRef.current.children.length > 0) {
+        groupRef.current.remove(groupRef.current.children[0]);
+      }
+    }
+  }, [hovered, nodes]);
 
 
 
@@ -93,7 +167,7 @@ function Landing() {
       shadows 
       camera={{
          
-        position:[0,1.2,2.5],
+        position:CamPos,
         fov: 75,
         near: 0.1,
         far: 500
@@ -108,7 +182,7 @@ function Landing() {
          shadow-bias={-0.005}
 
           />
-        {/* <ambientLight intensity={0.1} /> */}
+        <ambientLight intensity={0.3} />
         
         
         <Suspense fallback={null}>
@@ -127,7 +201,7 @@ function Landing() {
          
         </Suspense>
         <gridHelper/>
-        <SetCamera/>
+        <SetCameraRotation/>
         {/* <Controls/> */}
         {/* <CameraControls ref={controls} /> */}
     </Canvas>
