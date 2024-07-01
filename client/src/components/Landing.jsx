@@ -4,9 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useRef, useEffect, Suspense, useState } from 'react';
 import gsap from 'gsap';
-import { CameraControls, useGLTF } from "@react-three/drei";
+import { CameraControls} from "@react-three/drei";
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
-
+import { useGLTF } from '@react-three/drei'
 import Kiwi from '/src/assets/models/Kiwi.jsx'
 import Brain from '/src/assets/models/Brain.jsx'
 import Floor from '/src/assets/models/Floor.jsx'
@@ -43,7 +43,7 @@ function MouseCamera() {
   const canvas = document.querySelector('.landingCanvas');
   useEffect(() => {
     const handleMouseMove = (e) => {
-      console.log("MOVE")
+      
       let newx =( e.clientX - oldx) * 0.08;
       let newy = (e.clientY - oldy)*0.1;
       
@@ -130,29 +130,24 @@ function transformMesh(mesh) {
 
 
 function Landing() {
-  const brainRef = useRef();
-  const controls = useRef();
+
   const groupRef = useRef();
   
 
   
   const [hovered, setHovered] = useState(false)
-  const { nodes } = useGLTF('/brain.gltf');
+  const { nodes, isReady } = useGLTF('/brain.gltf');
+  
   
 
-  useEffect(() => {
-    groupRef.current = new THREE.Group();
-    if (hovered && nodes && nodes.brain) {
-      const points = transformMesh(nodes.brain);
+
+
+
+    
+      
       document.body.style.cursor = hovered ? 'pointer' : 'auto'
-      groupRef.current.add(points);
-    } else {
-      // Remove points if not hovered
-      while (groupRef.current.children.length > 0) {
-        groupRef.current.remove(groupRef.current.children[0]);
-      }
-    }
-  }, [hovered, nodes]);
+     
+    
 
 
 
@@ -202,7 +197,7 @@ function Landing() {
         </Suspense>
         <gridHelper/>
         <SetCameraRotation/>
-        {/* <Controls/> */}
+        <Controls/>
         {/* <CameraControls ref={controls} /> */}
     </Canvas>
           

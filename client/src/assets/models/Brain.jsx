@@ -7,26 +7,70 @@ Source: https://sketchfab.com/3d-models/human-brain-7a27c17fd6c0488bb31ab093236a
 Title: Human Brain
 */
 
-import React, { useRef} from 'react'
+import React, { useRef,useEffect,useState} from 'react'
 import {useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei'
+import * as THREE from 'three'
+import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
+
+
+function transformMesh(mesh) {
+  const pointsGeometry = new THREE.BufferGeometry()
+  const vertices = []
+  const tempPosition = new THREE.Vector3()
+
+  const sampler = new MeshSurfaceSampler(mesh).build()
+
+  for (let i = 0; i < 9900; i++) {
+    sampler.sample(tempPosition)
+    vertices.push(tempPosition.x, tempPosition.y, tempPosition.z)
+  }
+
+  pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+
+  const pointsMaterial = new THREE.PointsMaterial({
+    color: 0x5c0b17,
+    size: 0.005,
+    blending: THREE.AdditiveBlending,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
+    sizeAttenuation: true
+  })
+
+  return new THREE.Points(pointsGeometry, pointsMaterial)
+}
+
+
+
+
 
 export default function Model(props) {
+  const group = useRef()
   const { nodes, materials } = useGLTF('/brain.gltf')
-
+  const [rotationSpeed, setRotationSpeed] = useState(0.001);
+  const [showPoints, setShowPoints] = useState(false);
 
   const brainRef = useRef();
   useFrame(() => {
     if (brainRef.current) {
-      brainRef.current.rotation.y += 0.001; // Rotate the brain around the y-axis
+      brainRef.current.rotation.y += rotationSpeed; // Rotate the brain around the y-axis
     }
   });
 
+  useEffect(() => {
+    if (nodes && nodes.brain) {
+      const points = transformMesh(nodes.Object_5)
+      group.current.add(points)
+
+      
+    }
+  }, [nodes])
 
   return (
     
-    <group ref={brainRef} {...props} dispose={null}>
-      <mesh geometry={nodes.Object_5.geometry} material={materials.material_0} scale={0.02} castShadow receiveShadow />
+    <group ref={group} {...props} dispose={null} scale={0.02} >
+      <mesh geometry={nodes.Object_5.geometry} material={materials.material_0}  castShadow receiveShadow />
     </group>
   )
 }
