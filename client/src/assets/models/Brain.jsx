@@ -12,7 +12,7 @@ import {useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
-
+// import {vertexShader, fragmentShader} from '/src/components/Shaders.jsx'
 
 function transformMesh(mesh) {
   const pointsGeometry = new THREE.BufferGeometry()
@@ -21,7 +21,7 @@ function transformMesh(mesh) {
 
   const sampler = new MeshSurfaceSampler(mesh).build()
 
-  for (let i = 0; i < 9900; i++) {
+  for (let i = 0; i < 69000; i++) {
     sampler.sample(tempPosition)
     vertices.push(tempPosition.x, tempPosition.y, tempPosition.z)
   }
@@ -29,7 +29,7 @@ function transformMesh(mesh) {
   pointsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
 
   const pointsMaterial = new THREE.PointsMaterial({
-    color: 0x5c0b17,
+    color: 0xff0026,
     size: 0.005,
     blending: THREE.AdditiveBlending,
     transparent: true,
@@ -49,30 +49,63 @@ export default function Model(props) {
   const group = useRef()
   const { nodes, materials } = useGLTF('/brain.gltf')
   const [rotationSpeed, setRotationSpeed] = useState(0.001);
-  const [showPoints, setShowPoints] = useState(false);
+  const pointsRef = useRef();
+  const [hovered, setHovered] = useState(false)
 
   const brainRef = useRef();
+
+  //Handles the slow rotation of the brain
   useFrame(() => {
     if (brainRef.current) {
-      brainRef.current.rotation.y += rotationSpeed; // Rotate the brain around the y-axis
+      brainRef.current.rotation.y += rotationSpeed;
+      pointsRef.current.rotation.y = brainRef.current.rotation.y; 
+    
     }
+
+    brainRef.current.visible = !hovered;
+    pointsRef.current.visible = hovered;
+
   });
 
   useEffect(() => {
     if (nodes && nodes.brain) {
       const points = transformMesh(nodes.Object_5)
+      pointsRef.current = points
+      
+
       group.current.add(points)
+      console.log("USEEffect ran")
+      
 
       
+
+
     }
   }, [nodes])
 
+
+  document.body.style.cursor = hovered ? 'pointer' : 'auto'
+
+  const handlePointerOver = () => setHovered(true);
+  const handlePointerOut = () => setHovered(false);
+
   return (
     
-    <group ref={group} {...props} dispose={null} scale={0.02} >
-      <mesh geometry={nodes.Object_5.geometry} material={materials.material_0}  castShadow receiveShadow />
+    <group ref={group} {...props} dispose={null} scale={0.02}  >
+      <mesh 
+      ref={brainRef}
+      geometry={nodes.Object_5.geometry}
+      material={materials.material_0}
+      castShadow receiveShadow
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+           />
     </group>
   )
 }
+
+
+
+
 
 useGLTF.preload('/brain.gltf')

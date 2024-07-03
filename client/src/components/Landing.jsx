@@ -195,9 +195,9 @@ function Landing() {
           
          
         </Suspense>
-        <gridHelper/>
+        {/* <gridHelper/> */}
         <SetCameraRotation/>
-        <Controls/>
+        {/* <Controls/> */}
         {/* <CameraControls ref={controls} /> */}
     </Canvas>
           
