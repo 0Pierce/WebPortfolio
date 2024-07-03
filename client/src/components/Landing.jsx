@@ -4,12 +4,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useRef, useEffect, Suspense, useState } from 'react';
 import gsap from 'gsap';
-import { CameraControls} from "@react-three/drei";
+import { CameraControls, ScrollControls, Scroll} from "@react-three/drei";
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
 import { useGLTF } from '@react-three/drei'
 import Kiwi from '/src/assets/models/Kiwi.jsx'
 import Brain from '/src/assets/models/Brain.jsx'
 import Floor from '/src/assets/models/Floor.jsx'
+import Arrow from '/src/assets/images/arrow.svg'
 
 
 
@@ -129,19 +130,36 @@ function transformMesh(mesh) {
 }
 
 
+
+
+
 function Landing() {
 
   const groupRef = useRef();
-  
-
+  const landingBod = useRef();
   
   const [hovered, setHovered] = useState(false)
+  const [headerToggle, setHeaderToggle] = useState(true)
   const { nodes, isReady } = useGLTF('/brain.gltf');
   
   
 
 
+    const ShowHeader = () => {
+        
+      if(landingBod.current){
+        setHeaderToggle(prevState => !prevState)
+        console.log(headerToggle)
 
+        if(headerToggle){
+          landingBod.current.style.height='90vh'
+        }else{
+          landingBod.current.style.height='100vh'
+
+        }
+
+      }
+    }
 
     
       
@@ -152,26 +170,30 @@ function Landing() {
 
 
 
-
+      const backgroundColor = 'rgba(0, 0, 255, 0.5)';
   return (
-    <div className="landingBody">
+    <div className="landingBody" ref={landingBod}>
       <div className="landingContent">
+        <div className="landingHeaderToggle">
+          <img src={Arrow} alt="Arrow" onClick={ShowHeader} />
+        </div>
         <div className="landingCanvas">
+        
         
     <Canvas
       shadows 
       camera={{
-         
         position:CamPos,
         fov: 75,
         near: 0.1,
         far: 500
       }}
+      background={backgroundColor}
     >
         <MouseCamera/>
         
         <pointLight
-         position={[4, 3, 3]}
+         position={[4, 4, 3]}
          intensity={35}
          castShadow
          shadow-bias={-0.005}
@@ -181,10 +203,12 @@ function Landing() {
         
         
         <Suspense fallback={null}>
+          <ScrollControls pages={3}>
+
           
+
             {/* Rotation in radiants, so I convered into degrees for easier manipulation */}
             <Brain
-            // ref={brainRef}
             rotation={[0 * ( Math.PI/180), 35 * ( Math.PI/180), 0 * ( Math.PI/180)]}
             position={[0, 0.5, 0]}
             onPointerOver={() => setHovered(true)}
@@ -192,21 +216,34 @@ function Landing() {
              />
 
              <Floor/>
+
+
+              <Scroll>
+                  {/* Scrolls ThreeJS Objects */}
+              </Scroll>
+
+              <Scroll html>
+                
+                <h1>html in here (optional)</h1>
+                <h1 style={{ top: '100vh' }}>second page</h1>
+                <h1 style={{ top: '200vh' }}>third page</h1>
+             </Scroll>
           
-         
+            </ScrollControls>
         </Suspense>
         {/* <gridHelper/> */}
         <SetCameraRotation/>
         {/* <Controls/> */}
         {/* <CameraControls ref={controls} /> */}
     </Canvas>
-          
+
         </div>
         
        
 
         
       </div>
+      
     </div>
   );
 }

@@ -51,6 +51,7 @@ export default function Model(props) {
   const [rotationSpeed, setRotationSpeed] = useState(0.001);
   const pointsRef = useRef();
   const [hovered, setHovered] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   const brainRef = useRef();
 
@@ -73,7 +74,7 @@ export default function Model(props) {
       pointsRef.current = points
       
 
-      group.current.add(points)
+      //group.current.add(points)
       console.log("USEEffect ran")
       
 
@@ -100,6 +101,15 @@ export default function Model(props) {
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
            />
+
+    {pointsRef.current && (
+      <points
+        ref={pointsRef}
+        geometry={pointsRef.current.geometry}
+        material={pointsRef.current.material}
+      />
+    )}
+
     </group>
   )
 }

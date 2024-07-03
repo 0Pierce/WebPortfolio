@@ -1,12 +1,21 @@
 .homePageBody{
-    background-color: aquamarine;
+    background-color: rgb(225, 255, 0);
     width: 100%;
     height: 100vh;
     margin: 0px;
     margin-top: 0px;
     position: relative;
     z-index: 3;
+    overflow: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
 }
+
+.homePageBody::-webkit-scrollbar {
+    display: none;
+  }
+
+
 
 .homePageBody h1{
     margin: 0px;

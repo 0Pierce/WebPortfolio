@@ -16,7 +16,7 @@ function HomePage() {
       <Landing />
       <Header />
       <div className="homePageBody" ref={containerRef}>
-      
+        <h1>HOMEPAGE</h1>
       </div>
     </>
   );
