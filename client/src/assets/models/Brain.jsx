@@ -61,8 +61,6 @@ export default function Model(props) {
       brainRef.current.rotation.y += rotationSpeed;
       pointsRef.current.rotation.y = brainRef.current.rotation.y; 
        
-
-      
     }
 
     brainRef.current.visible = !hovered;
