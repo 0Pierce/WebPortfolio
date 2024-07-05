@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useRef, useEffect, Suspense, useState } from 'react';
 import gsap from 'gsap';
-import { CameraControls, ScrollControls, Scroll} from "@react-three/drei";
+import { CameraControls, ScrollControls, Scroll, useScroll} from "@react-three/drei";
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler'
 import { useGLTF } from '@react-three/drei'
 import Kiwi from '/src/assets/models/Kiwi.jsx'
@@ -164,13 +164,26 @@ function Landing() {
     
       
       document.body.style.cursor = hovered ? 'pointer' : 'auto'
-     
+      const scroll = useScroll();
+
+      // Determine the current page
+      // const currentPage = Math.floor(scroll.offset * 3); // Assuming 3 pages
     
+      // Background colors for each page
+      const backgroundColors = [
+        'rgba(252, 59, 0, 0.8)',
+        'rgba(0, 81, 244, 0.8)',
+        'rgba(0, 244, 81, 0.8)'
+      ];
+    
+      // Get the background color for the current page
+      // const backgroundColorCanva = backgroundColors[currentPage];
 
 
+  
 
-
-      const backgroundColor = 'rgba(0, 0, 255, 0.5)';
+      const backgroundColor = 'rgba(252, 59, 0, 0.8)';
+      // const backgroundColorBlue ='rgba(0, 81, 244, 0.8)'
   return (
     <div className="landingBody" ref={landingBod}>
       <div className="landingContent">
@@ -188,7 +201,7 @@ function Landing() {
         near: 0.1,
         far: 500
       }}
-      background={backgroundColor}
+      // style={{ background: backgroundColorCanva }}
     >
         <MouseCamera/>
         
@@ -203,7 +216,7 @@ function Landing() {
         
         
         <Suspense fallback={null}>
-          <ScrollControls pages={3}>
+          <ScrollControls pages={3} >
 
           
 
@@ -223,10 +236,19 @@ function Landing() {
               </Scroll>
 
               <Scroll html>
+                <div style={{position: 'relative',color: 'azure', margin: '0px', top: '0vh',backgroundColor: 'lightgray'}}>
+                  <h1 style={{color:'azure', fontSize: '15vh', marginLeft: '10px', marginTop: '0px'}}>Welcome</h1>
+                  <hr style={{position: 'absolute', width: '55vh', left: '100px', top: '89%', margin: '0px'}}/>
+                </div>
+
+                <div style={{position: 'relative',top: '100vh', margin: '0px',backgroundColor: 'lightgray'}} >
+                  <p style={{margin: '0px'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi consequatur soluta quaerat libero veritatis reiciendis neque minus id quam nemo, consectetur provident tenetur atque. Iure ullam nulla corrupti accusamus veniam?</p>
+                </div>
+
+                <div style={{position: 'relative',top: '200vh',margin: '0px'}} >
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam commodi quaerat corrupti molestiae molestias esse eveniet quos dolore soluta dignissimos quod dolores quasi mollitia sit illum fugit, id eligendi unde!</p>
+                </div>        
                 
-                <h1>html in here (optional)</h1>
-                <h1 style={{ top: '100vh' }}>second page</h1>
-                <h1 style={{ top: '200vh' }}>third page</h1>
              </Scroll>
           
             </ScrollControls>
